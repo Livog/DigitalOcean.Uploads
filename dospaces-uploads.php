@@ -22,19 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-/**
- * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
- */
-define( 'PR_BIGGER_UPLOADS_VER', '1.0.0' );
-
-/**
- * Path to the plugin root directory.
- */
-define( 'PR_BIGGER_UPLOADS_PATH', plugin_dir_path( __FILE__ ) );
-
-require_once PR_BIGGER_UPLOADS_PATH . 'vendor/autoload.php';
+if (file_exists($composer = __DIR__ . '/vendor/autoload.php')) {
+    require_once $composer;
+}
 
 function guidv4($data = null) {
     // Generate 16 bytes (128 bits) of random data or use the data passed into the function.
@@ -58,7 +48,6 @@ register_activation_hook( __FILE__, function(){
 } );
 */
 add_action( 'plugins_loaded', function(){
-    (new Api\Media())->register();
     (new Wp\Filters())->register();
     (new Wp\Uploader())->register();
     (new Acf\SettingsPage());
