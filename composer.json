@@ -9,9 +9,9 @@
     }
   },
   "require": {
-    "php": ">=8.0 <8.1",
+    "php": ">=8.0",
     "guzzlehttp/guzzle": "^7.4",
-    "illuminate/collections": "^9.1",
+    "illuminate/collections": "^8.0",
     "stoutlogic/acf-builder": "^1.12.0",
     "aws/aws-sdk-php": "*"
   },

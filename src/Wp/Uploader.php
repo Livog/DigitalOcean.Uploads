@@ -15,7 +15,6 @@ require_once ABSPATH . 'wp-admin/includes/image.php';
 class Uploader
 {
     private $s3Client;
-    private $phpMaxUploadSize;
 
     public static function register(): Uploader
     {
@@ -23,27 +22,22 @@ class Uploader
     }
 
     public function __construct(){
-        $location = @get_field(SettingsPage::FIELD_DIGITAL_OCEAN_SPACES_LOCATION, 'option');
-        $key = @get_field(SettingsPage::FIELD_DIGITAL_OCEAN_SPACES_KEY, 'option');
-        $secret = @get_field(SettingsPage::FIELD_DIGITAL_OCEAN_SPACES_SECRET, 'option');
-        $this->s3Client = new S3Client([
-            'version' => 'latest',
-            'endpoint' => 'https://' . $location . '.digitaloceanspaces.com',
-            'region' => $location,
-            'credentials' => [
-                'key' => $key,
-                'secret' => $secret
-            ]
-        ]);
-        //$this->phpMaxUploadSize = \wp_convert_hr_to_bytes( ini_get( 'upload_max_filesize' ) );
-        //$this->addAdditionalUploaderJavascript();
-        //$this->overrideMaxUploadSize();
-        //$this->putBackMaxUploadFileSizeButAsAFilter();
+        add_action('acf/init', function(){
+            $location = get_field(SettingsPage::FIELD_DIGITAL_OCEAN_SPACES_LOCATION, 'option');
+            $key = get_field(SettingsPage::FIELD_DIGITAL_OCEAN_SPACES_KEY, 'option');
+            $secret = get_field(SettingsPage::FIELD_DIGITAL_OCEAN_SPACES_SECRET, 'option');
+            $this->s3Client = new S3Client([
+                'version' => 'latest',
+                'endpoint' => 'https://' . $location . '.digitaloceanspaces.com',
+                'region' => $location,
+                'credentials' => [
+                    'key' => $key,
+                    'secret' => $secret
+                ]
+            ]);
+        });
         add_action('delete_attachment', [$this, 'onDeleteAttachment'], 10, 2);
         add_action('add_attachment', [$this, 'onUploadAttachment'], 10, 1);
-        /*add_filter('pre_delete_attachment', function($post, $force_delete){
-            return false;
-        }, 10, 2);*/
     }
 
     private function getAttachmentFilename($attachmentID){
